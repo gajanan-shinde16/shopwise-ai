@@ -36,6 +36,6 @@ export const getSearchHistory = () => api.get('/search-history');
 export const deleteSearchHistory = (id) => api.delete(`/search-history/${id}`);
 
 // AI (Phase 6)
-export const sendAIChat = (query) => api.post('/ai/chat', { query });
+export const sendAIChat = (query, chatHistory = []) => api.post('/ai/chat', { query, chatHistory });
 
 export default api;
