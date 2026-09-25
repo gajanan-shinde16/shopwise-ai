@@ -1,6 +1,5 @@
 import { ChatOpenAI } from '@langchain/openai';
-import { createToolCallingAgent, AgentExecutor } from 'langchain/agents';
-import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
+import { createReactAgent } from '@langchain/langgraph/prebuilt';
 
 // Import all tools
 import searchProducts from '../tools/searchProducts.js';
@@ -34,31 +33,20 @@ IMPORTANT:
 - If no products match, say so honestly and suggest adjusting the requirements.
 - You can call multiple tools in sequence to gather complete information.`;
 
-// Create the agent
+// Create the agent using LangGraph's prebuilt createReactAgent
 const createShoppingAgent = () => {
   const llm = new ChatOpenAI({
     model: 'gpt-4o-mini',
-    temperature: 0.3, // Lower temperature for more consistent, factual responses
+    temperature: 0.3,
   });
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    ['system', SYSTEM_PROMPT],
-    new MessagesPlaceholder('chat_history'),
-    ['human', '{input}'],
-    new MessagesPlaceholder('agent_scratchpad'),
-  ]);
-
-  const agent = createToolCallingAgent({ llm, tools, prompt });
-
-  const executor = new AgentExecutor({
-    agent,
+  const agent = createReactAgent({
+    llm,
     tools,
-    verbose: true,          // Logs tool calls to console — helpful for debugging
-    maxIterations: 8,       // Prevent infinite loops
-    returnIntermediateSteps: true,  // Return which tools were called — key for transparency
+    stateModifier: SYSTEM_PROMPT,
   });
 
-  return executor;
+  return agent;
 };
 
 export default createShoppingAgent;
