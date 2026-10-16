@@ -49,7 +49,9 @@ export default function ChatMessage({ message }) {
                 <Link
                   key={product.id}
                   to={`/products/${product.id}`}
-                  className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 hover:border-indigo-300 hover:shadow-md transition-all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 hover:border-indigo-300 hover:shadow-md transition-all group"
                 >
                   <img
                     src={product.image_url}
