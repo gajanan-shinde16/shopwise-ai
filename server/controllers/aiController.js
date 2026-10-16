@@ -40,8 +40,11 @@ export const chat = async (req, res, next) => {
 
     // Save query to search history if authenticated
     if (req.user?.id) {
-      pool.query('INSERT INTO search_history (user_id, query) VALUES (?, ?)', [req.user.id, query.trim()])
-        .catch((err) => console.error('Failed to log search history:', err.message));
+      try {
+        await pool.query('INSERT INTO search_history (user_id, query) VALUES (?, ?)', [req.user.id, query.trim()]);
+      } catch (logErr) {
+        console.error('Failed to log search history:', logErr.message);
+      }
     }
 
     // Build messages array: chat history + new user message

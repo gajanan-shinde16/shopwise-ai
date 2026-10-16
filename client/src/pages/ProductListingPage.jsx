@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getProducts, getCategories } from '../services/api';
+import { getProducts, getCategories, addSearchHistory } from '../services/api';
 import ProductGrid from '../components/products/ProductGrid';
 import ProductFilters from '../components/products/ProductFilters';
+import { useAuth } from '../context/AuthContext';
 import { Search, X } from 'lucide-react';
 
 export default function ProductListingPage() {
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
 
@@ -50,6 +52,11 @@ export default function ProductListingPage() {
     e.preventDefault();
     if (searchTerm.trim()) {
       setSearchParams({ q: searchTerm.trim() });
+      if (user) {
+        addSearchHistory(searchTerm.trim()).catch((err) =>
+          console.error('Failed to log catalog search', err)
+        );
+      }
     } else {
       setSearchParams({});
     }
