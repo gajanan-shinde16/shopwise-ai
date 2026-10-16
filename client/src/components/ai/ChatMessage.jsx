@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Bot, User, Wrench, Star, ExternalLink, Sparkles } from 'lucide-react';
+import { Bot, User, Wrench, Star, ExternalLink, ShoppingBag } from 'lucide-react';
 import FormattedMessage from './FormattedMessage';
 
 export default function ChatMessage({ message }) {
@@ -51,9 +51,9 @@ export default function ChatMessage({ message }) {
         {/* Product cards (shown after AI response) */}
         {message.products && message.products.length > 0 && (
           <div className="mt-3.5 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs text-indigo-700 font-semibold px-1">
-              <Sparkles size={13} className="text-indigo-500" />
-              <span>Matching Products ({message.products.length})</span>
+            <div className="flex items-center gap-1.5 text-xs text-gray-700 font-semibold px-1">
+              <ShoppingBag size={13} className="text-indigo-600" />
+              <span>Recommended Products ({message.products.length})</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {message.products.map((product) => (

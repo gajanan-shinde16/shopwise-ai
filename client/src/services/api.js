@@ -34,6 +34,7 @@ export const removeFromWishlist = (productId) => api.delete(`/wishlist/${product
 // Search History (Phase 9)
 export const getSearchHistory = () => api.get('/search-history');
 export const deleteSearchHistory = (id) => api.delete(`/search-history/${id}`);
+export const clearSearchHistory = () => api.delete('/search-history');
 
 // AI (Phase 6)
 export const sendAIChat = (query, chatHistory = []) => api.post('/ai/chat', { query, chatHistory });

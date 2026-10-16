@@ -1,8 +1,14 @@
 import pool from '../config/db.js';
 
-export const getProducts = async ({ category, brand, minPrice, maxPrice, sort, page = 1, limit = 12 }) => {
+export const getProducts = async ({ q, category, brand, minPrice, maxPrice, sort, page = 1, limit = 12 }) => {
   let query = 'SELECT * FROM products WHERE 1=1';
   const params = [];
+
+  if (q && q.trim()) {
+    query += ' AND (name LIKE ? OR description LIKE ? OR brand LIKE ?)';
+    const term = `%${q.trim()}%`;
+    params.push(term, term, term);
+  }
 
   if (category)  { query += ' AND category = ?'; params.push(category); }
   if (brand)     { query += ' AND brand = ?';    params.push(brand); }

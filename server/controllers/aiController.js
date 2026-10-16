@@ -38,6 +38,12 @@ export const chat = async (req, res, next) => {
 
     if (!query) return res.status(400).json({ success: false, message: 'Query is required' });
 
+    // Save query to search history if authenticated
+    if (req.user?.id) {
+      pool.query('INSERT INTO search_history (user_id, query) VALUES (?, ?)', [req.user.id, query.trim()])
+        .catch((err) => console.error('Failed to log search history:', err.message));
+    }
+
     // Build messages array: chat history + new user message
     const messages = chatHistory.map((msg) =>
       msg.role === 'user' ? new HumanMessage(msg.content) : new AIMessage(msg.content)

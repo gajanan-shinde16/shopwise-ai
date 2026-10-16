@@ -5,8 +5,8 @@ import errorHandler from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
-// import wishlistRoutes from './routes/wishlistRoutes.js';
-// import searchHistoryRoutes from './routes/searchHistoryRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
+import searchHistoryRoutes from './routes/searchHistoryRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 
 const app = express();
@@ -18,8 +18,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
-// app.use('/api/wishlist', wishlistRoutes);
-// app.use('/api/search-history', searchHistoryRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/search-history', searchHistoryRoutes);
 app.use('/api/ai', aiRoutes);
 
 app.get('/api/health', (req, res) => {

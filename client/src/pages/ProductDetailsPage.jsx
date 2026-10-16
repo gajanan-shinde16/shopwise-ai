@@ -1,24 +1,50 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getProductById, getProductReviews } from '../services/api';
-import { Star, Package, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { getProductById, getProductReviews, getWishlist, addToWishlist, removeFromWishlist } from '../services/api';
+import { Star, Package, ArrowLeft, Heart } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProductDetailsPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [inWishlist, setInWishlist] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getProductById(id), getProductReviews(id)])
-      .then(([prodRes, revRes]) => {
+    Promise.all([
+      getProductById(id),
+      getProductReviews(id),
+      user ? getWishlist().catch(() => ({ data: { wishlist: [] } })) : Promise.resolve({ data: { wishlist: [] } }),
+    ])
+      .then(([prodRes, revRes, wishRes]) => {
         setProduct(prodRes.data.product);
-        setReviews(revRes.data.reviews);
+        setReviews(revRes.data.reviews || []);
+        const isWished = (wishRes.data.wishlist || []).some((item) => Number(item.id) === Number(id));
+        setInWishlist(isWished);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, user]);
+
+  const handleToggleWishlist = async () => {
+    if (!user) {
+      alert('Please log in to save items to your wishlist.');
+      return;
+    }
+    try {
+      if (inWishlist) {
+        await removeFromWishlist(id);
+        setInWishlist(false);
+      } else {
+        await addToWishlist(id);
+        setInWishlist(true);
+      }
+    } catch (err) {
+      console.error('Failed to toggle wishlist', err);
+    }
+  };
 
   if (loading) return <div className="text-center py-20 text-gray-500">Loading...</div>;
   if (!product) return <div className="text-center py-20 text-gray-500">Product not found.</div>;
@@ -44,11 +70,25 @@ export default function ProductDetailsPage() {
             <h1 className="text-2xl font-bold text-gray-800 mt-1">{product.name}</h1>
             <p className="text-gray-500 mt-1">{product.brand}</p>
 
-            <div className="flex items-center gap-4 mt-4">
-              <span className="text-3xl font-bold text-gray-900">₹{product.price.toLocaleString('en-IN')}</span>
-              <span className="flex items-center gap-1 text-yellow-600">
-                <Star size={18} fill="currentColor" /> {product.rating}
-              </span>
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center gap-4">
+                <span className="text-3xl font-bold text-gray-900">₹{Number(product.price).toLocaleString('en-IN')}</span>
+                <span className="flex items-center gap-1 text-yellow-600">
+                  <Star size={18} fill="currentColor" /> {product.rating}
+                </span>
+              </div>
+
+              <button
+                onClick={handleToggleWishlist}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-colors cursor-pointer ${
+                  inWishlist
+                    ? 'bg-red-50 border-red-200 text-red-600 hover:bg-red-100'
+                    : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-indigo-600'
+                }`}
+              >
+                <Heart size={16} fill={inWishlist ? 'currentColor' : 'none'} className={inWishlist ? 'text-red-500' : ''} />
+                <span>{inWishlist ? 'Saved in Wishlist' : 'Add to Wishlist'}</span>
+              </button>
             </div>
 
             <div className="flex items-center gap-2 mt-3">

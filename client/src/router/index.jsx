@@ -6,6 +6,8 @@ import RegisterPage from '../pages/RegisterPage';
 import ProductListingPage from '../pages/ProductListingPage';
 import ProductDetailsPage from '../pages/ProductDetailsPage';
 import AIAssistantPage from '../pages/AIAssistantPage';
+import WishlistPage from '../pages/WishlistPage';
+import SearchHistoryPage from '../pages/SearchHistoryPage';
 import ProtectedRoute from '../components/common/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -21,9 +23,9 @@ const router = createBrowserRouter([
 
       // Protected routes
       { path: 'ai-assistant', element: <ProtectedRoute><AIAssistantPage /></ProtectedRoute> },
+      { path: 'wishlist', element: <ProtectedRoute><WishlistPage /></ProtectedRoute> },
+      { path: 'search-history', element: <ProtectedRoute><SearchHistoryPage /></ProtectedRoute> },
       // { path: 'compare', element: <ProtectedRoute><ComparisonPage /></ProtectedRoute> },
-      // { path: 'wishlist', element: <ProtectedRoute><WishlistPage /></ProtectedRoute> },
-      // { path: 'search-history', element: <ProtectedRoute><SearchHistoryPage /></ProtectedRoute> },
     ],
   },
 ]);
