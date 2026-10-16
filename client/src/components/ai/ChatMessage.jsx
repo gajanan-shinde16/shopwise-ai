@@ -1,4 +1,5 @@
-import { Bot, User, Wrench } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Bot, User, Wrench, Star, ExternalLink } from 'lucide-react';
 
 export default function ChatMessage({ message }) {
   const isUser = message.role === 'user';
@@ -38,6 +39,44 @@ export default function ChatMessage({ message }) {
         >
           {message.content}
         </div>
+
+        {/* Product cards (shown after AI response) */}
+        {message.products && message.products.length > 0 && (
+          <div className="mt-3 space-y-2">
+            <p className="text-xs text-gray-500 font-medium">Recommended Products:</p>
+            <div className="grid grid-cols-1 gap-2">
+              {message.products.map((product) => (
+                <Link
+                  key={product.id}
+                  to={`/products/${product.id}`}
+                  className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-3 hover:border-indigo-300 hover:shadow-md transition-all"
+                >
+                  <img
+                    src={product.image_url}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded-lg bg-gray-100 flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-gray-800 text-sm truncate">{product.name}</p>
+                    <p className="text-xs text-gray-500">{product.brand} · {product.category}</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="font-bold text-gray-900 text-sm">₹{product.price.toLocaleString('en-IN')}</span>
+                      <span className="flex items-center gap-1 text-xs text-yellow-600">
+                        <Star size={12} fill="currentColor" /> {product.rating}
+                      </span>
+                      {product.stock > 0 ? (
+                        <span className="text-xs text-green-600">In Stock</span>
+                      ) : (
+                        <span className="text-xs text-red-500">Out of Stock</span>
+                      )}
+                    </div>
+                  </div>
+                  <ExternalLink size={16} className="text-indigo-400 flex-shrink-0" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* User avatar */}

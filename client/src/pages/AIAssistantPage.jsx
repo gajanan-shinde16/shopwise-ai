@@ -23,13 +23,14 @@ export default function AIAssistantPage() {
 
       const res = await sendAIChat(query, chatHistory);
 
-      // Add AI response with tool steps
+      // Add AI response with tool steps and product cards
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
           content: res.data.response,
           toolsUsed: res.data.toolsUsed,
+          products: res.data.products,
         },
       ]);
     } catch (err) {
