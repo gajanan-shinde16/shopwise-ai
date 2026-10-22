@@ -1,17 +1,36 @@
 import jwt from 'jsonwebtoken';
 
 const auth = (req, res, next) => {
-  const header = req.headers.authorization;
+  // Step 1: Get the token from the request
+  const token = req.headers.authorization?.split(' ')[1];
 
-  if (!header || !header.startsWith('Bearer ')) {
-    return res.status(401).json({ success: false, message: 'No token provided. Please login.' });
+  // Step 2: Check whether the token exists
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: 'Please login first.'
+    });
   }
 
+  // Step 3: Verify the token
   try {
-    req.user = jwt.verify(header.split(' ')[1], process.env.JWT_SECRET);
+    const user = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Step 4: Store user information in the request
+    req.user = user;
+
+    // Step 5: Allow the request to continue
     next();
-  } catch {
-    return res.status(401).json({ success: false, message: 'Invalid or expired token.' });
+
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid or expired token.'
+    });
+
+    //Here, the catch block sends the response directly to the client.
+    // The error-handling middleware does not run.
+    // Why? Because you handled the error locally. You didn't pass it to Express using next(err).
   }
 };
 
